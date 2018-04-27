@@ -8,7 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -38,11 +40,13 @@ public class Livro implements Serializable{
     private String resumo;
     
     @JsonInclude(Include.NON_NULL)
-    @Transient
-    private List<Comentario> comentario;
+    @OneToMany(mappedBy = "livro")
+    private List<Comentario> comentarios;
     
+    @ManyToOne
+    @JoinColumn(name = "autor_id")
     @JsonInclude(Include.NON_NULL)
-    private String autor;
+    private Autor autor;
     
     public Livro(){}
     
@@ -90,19 +94,19 @@ public class Livro implements Serializable{
         this.resumo = resumo;
     }
 
-    public List<Comentario> getComentario() {
-        return comentario;
+    public List<Comentario> getComentarios() {
+        return comentarios;
     }
 
-    public void setComentario(List<Comentario> comentario) {
-        this.comentario = comentario;
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
     }
 
-    public String getAutor() {
+    public Autor getAutor() {
         return autor;
     }
 
-    public void setAutor(String autor) {
+    public void setAutor(Autor autor) {
         this.autor = autor;
     }
     

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import br.com.baiocchilousa.socialbooks.domain.Comentario;
 import br.com.baiocchilousa.socialbooks.domain.Livro;
 import br.com.baiocchilousa.socialbooks.services.LivrosService;
-import br.com.baiocchilousa.socialbooks.services.exceptions.LivroNaoEncontradoException;
 
 @RestController
 @RequestMapping("/livros")
@@ -38,29 +37,15 @@ public class LivrosResources {
     //Busca um livro
     @GetMapping("/{id}")//@PathVariable: pega a variável da requisição coloca no atributo id
     public ResponseEntity<?> buscar(@PathVariable Long id) {
-
-        Optional<Livro> livro = null;
-        
-        try {
-            livro = livrosService.buscar(id);
-        } catch (LivroNaoEncontradoException e) {
-            return ResponseEntity.notFound().build();
-        }
-        
+        Livro livro = livrosService.buscar(id);
         return ResponseEntity.status(HttpStatus.OK).body(livro);
     }
     
     //Deletar o Livro
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        try {
-            //Tenta deletar o recurso
-            livrosService.deletar(id);
-        } catch (LivroNaoEncontradoException e) {
-            //Retorna 404
-            return ResponseEntity.notFound().build();
-        }
-        //Retorna No Content
+        livrosService.deletar(id);
+        //Retorna No Content(Sem conteúdo)
         return ResponseEntity.noContent().build();
     }
     
@@ -69,14 +54,7 @@ public class LivrosResources {
     public ResponseEntity<Void> atualizar(@RequestBody Livro livro, @PathVariable Long id) {
         //Para ter certeza de que o que está sendo atualizado é o id do recurso e não o objeto passado
         livro.setId(id);
-        
-        try {
-            livrosService.atualizar(livro);
-        } catch (LivroNaoEncontradoException e) {
-          //Retorna 404
-            return ResponseEntity.notFound().build();
-        }
-        
+        livrosService.atualizar(livro);
         //Retorna No content
         return ResponseEntity.noContent().build();
     }
@@ -92,5 +70,23 @@ public class LivrosResources {
         
         //Retornamos a URI e 201 Created
         return ResponseEntity.created(uri).build();
+    }
+    
+    //Adiciona comentários (Como não será utilizado em nenhuma outra parte da aplicação criamos aqui mesmo!)
+    @PostMapping("/{id}/comentarios")
+    public ResponseEntity<Void> adcionarComentario(@PathVariable("id") Long livroId, @RequestBody Comentario comentario) {
+        livrosService.salvarComentario(livroId, comentario);
+        
+        //Montamos a URI do recurso criado (Busca todos os comentários por vez)
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+        
+        //Retornamos a URI e 201 Created
+        return ResponseEntity.created(uri).build();
+    }
+    
+    @GetMapping("/{id}/comentarios")
+    public ResponseEntity<List<Comentario>> listarComentarios(@PathVariable("id") Long livroId) {
+        List<Comentario> comentarios = livrosService.listarComentarios(livroId);
+        return ResponseEntity.status(HttpStatus.OK).body(comentarios);
     }
 }

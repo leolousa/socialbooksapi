@@ -57,8 +57,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- Jackson: Permite a serialização e Deserialização da noa API de Datas 
-			do Java8 -->
+		<!-- Jackson: Permite a serialização e Deserialização da nova API de Datas do Java8 -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
