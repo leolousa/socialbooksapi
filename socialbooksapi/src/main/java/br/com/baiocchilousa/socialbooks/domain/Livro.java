@@ -1,7 +1,7 @@
 package br.com.baiocchilousa.socialbooks.domain;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -11,7 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -27,19 +31,23 @@ public class Livro implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)         
     private Long id;
     
-    @JsonInclude(Include.NON_NULL)
+    @NotEmpty(message = "O campo nome não pode ser vazio.")
     private String nome;
     
     @JsonInclude(Include.NON_NULL)
-    private Date publicacao;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @NotNull(message = "O campo Publicação é de preenchimento obrigatório.")
+    private LocalDate publicacao;
     
     @JsonInclude(Include.NON_NULL)
     private String editora;
     
     @JsonInclude(Include.NON_NULL)
+    @NotEmpty(message = "O Resumo deve ser preenchido.")
+    @Size(max = 1500, min = 10, message = "O resumo deve conter entre 10 e 1.500 caracteres.")
     private String resumo;
     
-    @JsonInclude(Include.NON_NULL)
+    @JsonInclude(Include.NON_EMPTY)
     @OneToMany(mappedBy = "livro")
     private List<Comentario> comentarios;
     
@@ -70,11 +78,11 @@ public class Livro implements Serializable{
         this.nome = nome;
     }
 
-    public Date getPublicacao() {
+    public LocalDate getPublicacao() {
         return publicacao;
     }
 
-    public void setPublicacao(Date publicacao) {
+    public void setPublicacao(LocalDate publicacao) {
         this.publicacao = publicacao;
     }
 
@@ -109,7 +117,5 @@ public class Livro implements Serializable{
     public void setAutor(Autor autor) {
         this.autor = autor;
     }
-    
-    
     
 }

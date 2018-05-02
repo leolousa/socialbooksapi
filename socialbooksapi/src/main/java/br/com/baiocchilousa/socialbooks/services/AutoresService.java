@@ -1,18 +1,14 @@
 package br.com.baiocchilousa.socialbooks.services;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import br.com.baiocchilousa.socialbooks.domain.Autor;
-import br.com.baiocchilousa.socialbooks.domain.Comentario;
-import br.com.baiocchilousa.socialbooks.domain.Livro;
 import br.com.baiocchilousa.socialbooks.repository.AutoresRepository;
 import br.com.baiocchilousa.socialbooks.services.exceptions.AutorExistenteException;
-import br.com.baiocchilousa.socialbooks.services.exceptions.LivroNaoEncontradoException;
+import br.com.baiocchilousa.socialbooks.services.exceptions.AutorNaoEncontradoException;
 
 @Service
 public class AutoresService {
@@ -24,18 +20,18 @@ public class AutoresService {
         return autores.findAll();
     }
     
-    public Autor buscar (Long id) {
+    public Autor buscar(Long id) {
         Autor autor = autores.findById(id).orElse(null);
         
         if(autor == null) {
             //Não encontrou o recurso da requisição, retornando 404
-            throw new LivroNaoEncontradoException("O Autoro não pode ser encontrado!");
+            throw new AutorNaoEncontradoException("O autor não pode ser encontrado!");
         }
         
         return autor;
     }
     
-    public Autor salvar (Autor autor) {
+    public Autor salvar(Autor autor) {
         //Verifica se o autor passado já existe, já tem um id
         if(autor.getId() != null) {
             Autor a = autores.getOne(autor.getId());
@@ -46,7 +42,6 @@ public class AutoresService {
         return autores.save(autor);
     }
     
-    private void verificarExistencia(Autor autor) {
-        buscar(autor.getId());
-    }
+    
+    
 }

@@ -2,7 +2,8 @@ package br.com.baiocchilousa.socialbooks.resources;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,7 +52,7 @@ public class LivrosResources {
     
     //Atualizar registro
     @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizar(@RequestBody Livro livro, @PathVariable Long id) {
+    public ResponseEntity<Void> atualizar(@Valid @RequestBody Livro livro, @PathVariable Long id) {
         //Para ter certeza de que o que está sendo atualizado é o id do recurso e não o objeto passado
         livro.setId(id);
         livrosService.atualizar(livro);
@@ -61,7 +62,7 @@ public class LivrosResources {
     
     //Salva o livro
     @PostMapping()//@RequestBody: pega o corpo da requisição e coloca no objeto Livro
-    public ResponseEntity<Void> salvar(@RequestBody Livro livro) {
+    public ResponseEntity<Void> salvar(@Valid @RequestBody Livro livro) {
         livro = livrosService.salvar(livro);
         
         //Montamos a URI do recurso criado
