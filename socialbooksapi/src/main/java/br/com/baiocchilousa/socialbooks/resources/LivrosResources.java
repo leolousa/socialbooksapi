@@ -2,10 +2,12 @@ package br.com.baiocchilousa.socialbooks.resources;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,7 +41,11 @@ public class LivrosResources {
     @GetMapping("/{id}")//@PathVariable: pega a variável da requisição coloca no atributo id
     public ResponseEntity<?> buscar(@PathVariable Long id) {
         Livro livro = livrosService.buscar(id);
-        return ResponseEntity.status(HttpStatus.OK).body(livro);
+        
+        //Cache com 20 segundos do tempo de expiração (fica em cache no cliente por 20 segundos)
+        CacheControl cacheControl = CacheControl.maxAge(20, TimeUnit.SECONDS);
+        
+        return ResponseEntity.status(HttpStatus.OK).cacheControl(cacheControl).body(livro);
     }
     
     //Deletar o Livro
