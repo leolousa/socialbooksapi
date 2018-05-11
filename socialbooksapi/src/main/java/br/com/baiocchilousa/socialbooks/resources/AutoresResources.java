@@ -27,9 +27,7 @@ public class AutoresResources {
     @Autowired
     private AutoresService autoresService;
     
-    @GetMapping(produces = {
-            MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE
-    })
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Autor>> listar() {
         List<Autor> autores = autoresService.listar();
         return ResponseEntity.status(HttpStatus.OK).body(autores);

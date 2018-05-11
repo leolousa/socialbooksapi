@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +35,7 @@ public class LivrosResources {
     private LivrosService livrosService;
 
     //Lista todos os livros
+    @CrossOrigin
     @GetMapping()
     public ResponseEntity<List<Livro>> listar() {
         return ResponseEntity.status(HttpStatus.OK).body(livrosService.listar());
@@ -82,6 +86,12 @@ public class LivrosResources {
     //Adiciona comentários (Como não será utilizado em nenhuma outra parte da aplicação criamos aqui mesmo!)
     @PostMapping("/{id}/comentarios")
     public ResponseEntity<Void> adcionarComentario(@PathVariable("id") Long livroId, @RequestBody Comentario comentario) {
+        
+        //Pega o usuário autenticado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        
+        comentario.setUsuario(auth.getName());
+        
         livrosService.salvarComentario(livroId, comentario);
         
         //Montamos a URI do recurso criado (Busca todos os comentários por vez)

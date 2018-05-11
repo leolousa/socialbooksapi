@@ -2,6 +2,7 @@ package br.com.baiocchilousa.socialbooks.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,13 +15,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception{
-        auth.inMemoryAuthentication().withUser("algaworks")
-        .password(passwordEncoder().encode("s3nh4")).roles("USER");
+        auth.inMemoryAuthentication().withUser("usuario")
+        .password(passwordEncoder().encode("senha")).roles("USER");
     }
     
     protected void configure(HttpSecurity http) throws Exception {
         http.
-            authorizeRequests().anyRequest().authenticated()
+            authorizeRequests()
+            .antMatchers("/h2-console/**").permitAll()//Permite acesso ao console do H2
+            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() //Permite o envio das OPTIONS do HTTP (CORS)
+            .anyRequest().authenticated()
             .and()
                 .httpBasic()
             .and()
